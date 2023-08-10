@@ -6,6 +6,7 @@ const cors = require('cors');
 const port = process.env.PORT || process.argv[2] || 8080;
 
 const decklistsRouter = require('./routes/decklists');
+const cardSearchRouter = require('./routes/cardSearch');
 
 app.use(cors({
     origin: process.env.CLIENT_URL
@@ -20,5 +21,6 @@ app.use((req, res, next) => {
 });
 
 app.use('/decklists', decklistsRouter);
+app.use('/cardSearch', cardSearchRouter);
 
 app.listen(port, () => console.log(`Listening on ${port}`));

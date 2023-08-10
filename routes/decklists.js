@@ -17,17 +17,16 @@ const savedecklists = (decklistsData) => {
 router
     .route('/')
     .get((req, res) => {
-        const decklistsData = getdecklists().map((vid) => {
+        const decklistsData = getdecklists().map((deck) => {
             return {
-                "id": vid.id,
-                "title": vid.title,
-                "channel": vid.channel,
-                "image": vid.image
+                "id": deck.id,
+                "title": deck.title,
+                "image": deck.image
             }
         })
         res.status(200).json(decklistsData);
     })
-    .post(validateCreatedecklist, (req, res) => {
+    .post((req, res) => {
         const decklistsData = getdecklists();
         const newdecklist = {
             id: uuid(),
