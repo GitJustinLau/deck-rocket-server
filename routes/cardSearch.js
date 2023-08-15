@@ -17,8 +17,9 @@ router
                 if (!results) {
                     return res.status(404).json({ error: 'no cards with this name!' });
                 }
-                const cardNames = new Set(results.map((card) => card.name).sort());
-                res.status(200).json(cardNames);
+                const cardNamesSet = new Set(results.map((card) => card.name).sort());
+                const cardNamesArray = Array.from(cardNamesSet)
+                res.status(200).json(cardNamesArray);
             })
     })
 
