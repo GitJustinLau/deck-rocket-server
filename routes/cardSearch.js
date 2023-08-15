@@ -3,10 +3,11 @@ const router = express.Router();
 const mtg = require('mtgsdk')
 
 // partial name match https://docs.magicthegathering.io/#advancedcards_get_by_name
-mtg.card.where({ name: 'Archangel' })
-    .then(results => {
-        console.log(results)
-    })
+// mtg.card.where({ name: 'cathar' })
+//     .then(results => {
+//         const cardNames = new Set(results.map((card) => card.name).sort());
+//             console.log(cardNames);
+//     })
 
 router
     .route('/')
@@ -16,7 +17,8 @@ router
                 if (!results) {
                     return res.status(404).json({ error: 'no cards with this name!' });
                 }
-                res.status(200).json(results);
+                const cardNames = new Set(results.map((card) => card.name).sort());
+                res.status(200).json(cardNames);
             })
     })
 
