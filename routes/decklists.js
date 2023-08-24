@@ -2,54 +2,21 @@ const fs = require('fs');
 const express = require('express');
 const { v4: uuid } = require('uuid');
 const router = express.Router();
+const decklistsController = require('../controllers/decklistsController');
 
-
-const decklistsFilePath = './data/users/1/decklists.json';
-
-const getdecklists = () => {
-    return JSON.parse(fs.readFileSync(decklistsFilePath));
-}
-
-const savedecklists = (decklistsData) => {
-    fs.writeFileSync(decklistsFilePath, JSON.stringify(decklistsData));
-}
 
 router
     .route('/')
-    .get((req, res) => {
-        const decklistsData = getdecklists().map((deck) => {
-            return {
-                "id": deck.id,
-                "title": deck.title,
-                "image": deck.image
-            }
-        })
-        res.status(200).json(decklistsData);
-    })
-    .post((req, res) => {
-        const decklistsData = getdecklists();
-        const newdecklist = {
-            id: uuid(),
-            ...req.body,  
-        };
-
-        decklistsData.push(newdecklist);
-        savedecklists(decklistsData);
-        res.status(201).json(newdecklist);
-    });
+    .get(decklistsController.getAllDecklists)
+    .post(decklistsController.createDecklist)
 
 router
     .route('/:decklistId')
-    .get((req, res) => {
-        const decklistsData = getdecklists();
-        const currdecklistId = req.params.decklistId;
-        const decklist = decklistsData.find(decklist => decklist.id === currdecklistId);
+    .get(decklistsController.getDecklistId)
+    // .delete(decklistsController.deleteDecklistId)
+    // .put(decklistsController.editDecklistId)
 
-        if (!decklist) {
-            return res.status(404).json({ error: 'decklist not found' });
-        }
 
-        res.status(200).json(decklist);
-    })
-
+    router
+    .route('/:decklistId/cards/:cardId')
 module.exports = router;
