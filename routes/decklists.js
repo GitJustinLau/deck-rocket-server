@@ -3,18 +3,12 @@ const decklistsController = require('../controllers/decklistsController');
 
 
 router
-    .route('/')
+    .route('/:userId')
     .get(decklistsController.getAllDecklists)
     .post(decklistsController.createDecklist)
 
 router
     .route('/:decklistId')
-    .get(decklistsController.getDecklistId)
-    // .delete(decklistsController.deleteDecklistId)
-    // .put(decklistsController.editDecklistId)
 
-
-    // router
-    // .route('/:decklistId/cards/:cardId')
     
 module.exports = router;

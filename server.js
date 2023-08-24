@@ -13,7 +13,7 @@ app.use(express.json());
 app.use(express.static('./public'));
 
 // Routes
-app.use('/api/users', userRoutes); //I did not make the users route or controller. From class example.
+app.use('/users', userRoutes); //I did not make the users route or controller. From class example.
 app.use('/decklists', decklistsRouter);
 app.use('/cardSearch', cardSearchRouter);
 

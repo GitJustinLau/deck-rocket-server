@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 const registerUser = (req, res) => {
-    const { email, password } = req.body;
+    const { email, password, username } = req.body;
 
     if (!email || !password) {
         return res.status(400).send("Please enter the required fields.");
@@ -14,7 +14,8 @@ const registerUser = (req, res) => {
 
     const newUser = {
         email,
-        password: hashedPassword
+        password: hashedPassword,
+        username
     }
 
     knex('users')
@@ -61,7 +62,7 @@ const loginUser = (req, res) => {
             const token = jwt.sign(
                 { id: user.id, email: user.email },
                 process.env.SECRET,
-                { expiresIn: "5m" }
+                { expiresIn: "3d" }
             );
 
             res.status(200).json({ token: token });
@@ -73,6 +74,9 @@ const loginUser = (req, res) => {
 
 const currentUser = (req, res) => {
     // If there is no auth header provided
+
+    // console.log(req.headers.authorization)
+
     if (!req.headers.authorization) {
         return res.status(401).send("Please include your JWT");
     }
@@ -81,8 +85,8 @@ const currentUser = (req, res) => {
     const authHeader = req.headers.authorization;
     const authToken = authHeader.split(' ')[1];
 
-    console.log('Header: ', authHeader);
-    console.log('Token: ', authToken);
+    // console.log('Header: ', authHeader);
+    // console.log('Token: ', authToken);
 
     jwt.verify(authToken, process.env.SECRET, (err, decoded) => {
         console.log('Token: ', decoded);
