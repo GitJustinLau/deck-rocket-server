@@ -41,7 +41,7 @@ const createDecklist = (req, res) => {
 
 
 //single decklist functions
-const getDecklistID = (req, res) => {
+const getDecklistId = (req, res) => {
     const decklistsData = getdecklists();
     const currdecklistId = req.params.decklistId;
     const decklist = decklistsData.find(decklist => decklist.id === currdecklistId);
@@ -58,5 +58,5 @@ const getDecklistID = (req, res) => {
 module.exports = {
     getAllDecklists,
     createDecklist,
-    getDecklistID
+    getDecklistId
 }

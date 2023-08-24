@@ -1,7 +1,4 @@
-const fs = require('fs');
-const express = require('express');
-const { v4: uuid } = require('uuid');
-const router = express.Router();
+const router = require('express').Router();
 const decklistsController = require('../controllers/decklistsController');
 
 
@@ -17,6 +14,7 @@ router
     // .put(decklistsController.editDecklistId)
 
 
-    router
-    .route('/:decklistId/cards/:cardId')
+    // router
+    // .route('/:decklistId/cards/:cardId')
+    
 module.exports = router;
