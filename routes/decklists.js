@@ -9,6 +9,7 @@ router
 
 router
     .route('/:decklistId')
-
+    .get(decklistsController.activeDecklist)
+    .delete(decklistsController.delDecklist)
     
 module.exports = router;

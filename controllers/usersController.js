@@ -89,7 +89,7 @@ const currentUser = (req, res) => {
     // console.log('Token: ', authToken);
 
     jwt.verify(authToken, process.env.SECRET, (err, decoded) => {
-        console.log('Token: ', decoded);
+        // console.log('Token: ', decoded);
 
         if (err) {
             return res.status(401).send("Invalid auth token");
