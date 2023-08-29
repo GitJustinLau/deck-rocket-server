@@ -34,7 +34,8 @@ router
             })
 
             // SELECT * FROM card WHERE id IN (1, 2, 3, 4, 5, 6)
-            const dbCardIds = await knex('cards').whereIn('id', cardIds).select('id')
+            const dbCardIdsObj = await knex('cards').whereIn('id', cardIds).select('id')
+            const dbCardIds = dbCardIdsObj.map((idObj) => idObj.id)
             const dbInputs = cleanResults.filter((card) => !dbCardIds.includes(card.id))
             const insertCards = dbInputs.map((card) => knex('cards').insert(card));
             await Promise.all(insertCards);

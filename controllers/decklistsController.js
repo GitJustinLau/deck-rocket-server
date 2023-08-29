@@ -59,8 +59,8 @@ const delDecklist = async (req, res) => {
 
 const activeDecklist = (req, res) => {
     knex('decklist_cards')
-        .select("*")
-        .where({ deck_id: req.params.decklistId })
+        .select("card_id")
+        .where({ decklist_id: req.params.decklistId })
         .then((data) => {
             res.status(200).json(data);
         })
@@ -69,14 +69,26 @@ const activeDecklist = (req, res) => {
         );
 }
 
-const addCard = (req, res) => {
-    knex('decklist_cards')
-    .insert(newdecklist)
+const addCard = async (req, res) => {
+    const cardId = await knex('cards').where({ name: req.body.cardName }).select('id').first()
+    await knex('decklist_cards')
+        .insert({
+            "decklist_id": req.params.decklistId,
+            "card_id": cardId.id
+        })
+        .then(() => {
+            res.status(200).json({ message: 'Card added successfully to the decklist.' });
+        })
+        .catch((error) => {
+            console.error('Error adding card:', error);
+            res.status(500).json({ error: 'An error occurred while adding the card to the decklist.' });
+        });
 }
 
 module.exports = {
     getAllDecklists,
     createDecklist,
     delDecklist,
-    activeDecklist
+    activeDecklist,
+    addCard
 }
