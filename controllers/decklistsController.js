@@ -57,16 +57,17 @@ const delDecklist = async (req, res) => {
     };
 }
 
-const activeDecklist = (req, res) => {
-    knex('decklist_cards')
-        .select("card_id")
-        .where({ decklist_id: req.params.decklistId })
-        .then((data) => {
-            res.status(200).json(data);
-        })
-        .catch((err) =>
-            res.status(400).send(`Error retrieving decklists: ${err}`)
-        );
+const activeDecklist = async (req, res) => {
+    try {
+        const selectCards = await knex('decklist_cards').where({ decklist_id: req.params.decklistId }).select('card_id')
+        const pullCardsPromises = selectCards.map((card) => knex('cards').where({ id: card.card_id }).select('*'));
+        const pullCards = await Promise.all(pullCardsPromises);
+        const cardData = pullCards.map((cardArr) => cardArr[0])
+        console.log("cardData", cardData)
+        res.status(200).json(cardData);
+    } catch (err) {
+        res.status(400).send(`Error retrieving decklists: ${err}`)
+    }
 }
 
 const addCard = async (req, res) => {
