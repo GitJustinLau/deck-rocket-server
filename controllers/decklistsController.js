@@ -69,6 +69,11 @@ const activeDecklist = (req, res) => {
         );
 }
 
+const addCard = (req, res) => {
+    knex('decklist_cards')
+    .insert(newdecklist)
+}
+
 module.exports = {
     getAllDecklists,
     createDecklist,
