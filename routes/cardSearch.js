@@ -20,29 +20,40 @@ router
             }
 
             let cardIds = [];
-            const cleanResults = searchResults.map((card) => {
-                cardIds.push(card.id)
+            const dbCardsTable = searchResults.map((card) => {
+                const {id,name, manaCost, cmc, imageUrl } = card;
+                cardIds.push(id)
                 return {
-                    "id": card.id,
-                    "name": card.name,
-                    "manaCost": card.manaCost || null,
-                    "cmc": card.cmc || null,
-                    "colorIdentity": Array.isArray(card.colorIdentity) ? card.colorIdentity.join(',') : card.colorIdentity || null,
-                    "imageUrl": card.imageUrl ? card.imageUrl : null,
-                    "supertypes": Array.isArray(card.supertypes) ? card.supertypes.join(',') : card.supertypes || null
+                    id,
+                    name,
+                    manaCost,
+                    cmc,
+                    imageUrl
                 }
             })
 
-            // SELECT * FROM card WHERE id IN (1, 2, 3, 4, 5, 6)
+            const dbCardtypes = searchResults.map((card) => {
+                const {id,types, supertypes, subtypes} = card;
+                return {
+                    id,
+                    types, 
+                    supertypes, 
+                    subtypes
+                }
+            })
+
             const dbCardIdsObj = await knex('cards').whereIn('id', cardIds).select('id')
             const dbCardIds = dbCardIdsObj.map((idObj) => idObj.id)
-            const dbInputs = cleanResults.filter((card) => !dbCardIds.includes(card.id))
-            const insertCards = dbInputs.map((card) => knex('cards').insert(card));
-            await Promise.all(insertCards);
 
+
+            const dbCardsTableInputs = dbCardsTable.filter((card) => !dbCardIds.includes(card.id))
+            const insertCards = dbCardsTableInputs.map((card) => knex('cards').insert(card));
+            await Promise.all(insertCards);
             const dbSearch = await knex('cards').whereIn('id', cardIds).select('name')
             const cardNamesSet = Array.from(new Set(dbSearch.map((card) => card.name).sort()));
             res.status(200).json(cardNamesSet);
+
+            
         }
         catch (err) {
             console.error('Error:', err);
