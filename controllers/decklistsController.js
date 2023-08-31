@@ -59,14 +59,45 @@ const delDecklist = async (req, res) => {
 
 const activeDecklist = async (req, res) => {
     try {
-        const selectCards = await knex('decklist_cards').where({ decklist_id: req.params.decklistId }).select('card_id')
-        const pullCardsPromises = selectCards.map((card) => knex('cards').where({ id: card.card_id }).select('*'));
-        const pullCards = await Promise.all(pullCardsPromises);
-        const cardData = pullCards.map((cardArr) => cardArr[0])
-        console.log("cardData", cardData)
-        res.status(200).json(cardData);
+        let pullCards = await knex('decklist_cards')
+            .join('cards', 'decklist_cards.card_id', '=', 'cards.id')
+            .where({ 'decklist_cards.decklist_id': req.params.decklistId })
+            .select('cards.*');
+
+        const pullCardIds = await knex('decklist_cards').where({ 'decklist_cards.decklist_id': req.params.decklistId }).select('decklist_id', 'card_id');
+        const pullCardTypesPromises = pullCardIds.map(async (card) => {
+            const types = await knex('types')
+                .join('card_types', 'types.id', '=', 'card_types.type_id')
+                .where({ 'card_types.card_id': card.card_id })
+                .select('types.name')
+                console.log("types", types)
+            card.types = types.map((typeObj) => typeObj.name)
+            return card
+        })
+        const pullCardTypes = await Promise.all(pullCardTypesPromises)
+
+        const pullCardColorIdPromises = pullCardIds.map(async (card) => {
+            const colorId = await knex('colors')
+                .join('card_color_ids', 'colors.id', '=', 'card_color_ids.color_id')
+                .where({ 'card_color_ids.card_id': card.card_id })
+                .select('colors.name')
+            card.colorIdentity = colorId.map((colorObj) => colorObj.name)
+            return card
+        })
+        const pullCardColorIds = await Promise.all(pullCardColorIdPromises)
+        
+        pullCards = pullCards.map((card) => {
+            const typesIndex = pullCardTypes.findIndex((typeObj) => typeObj.card_id === card.id)
+            card.types = pullCardTypes[typesIndex].types
+            console.log("typesIndex", typesIndex)
+            const colorIdIndex = pullCardColorIds.findIndex((colorObj) => colorObj.card_id === card.id)
+            card.colorIdentity = pullCardColorIds[colorIdIndex].colorIdentity
+            return card
+        })
+        console.log("pullCards", pullCards)
+        res.status(200).json(pullCards);
     } catch (err) {
-        res.status(400).send(`Error retrieving decklists: ${err}`)
+        res.status(500).send(`Error retrieving decklists: ${err}`)
     }
 }
 
