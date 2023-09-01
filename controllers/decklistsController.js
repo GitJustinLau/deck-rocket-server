@@ -134,7 +134,7 @@ const addCard = async (req, res) => {
 
 const removeCard = async (req, res) => {
     try {
-        console.log("req.body.cardId", req.body.cardId)
+        // console.log("req.body.cardId", req.body.cardId)
         await knex('decklist_cards').where({ decklist_id: req.params.decklistId, card_id: req.body.cardId }).update({ is_removed: true })
         res.status(200).json({ message: 'Card successfully removed from decklist.' });
     } catch (error) {

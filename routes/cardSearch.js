@@ -21,7 +21,7 @@ router
 
             let cardIds = [];
             const dbCardsTable = searchResults.map((card) => {
-                const { id, name, manaCost, cmc, imageUrl, power, toughness } = card;
+                const { id, name, manaCost, cmc, imageUrl, power, toughness,text } = card;
                 cardIds.push(id)
                 return {
                     id,
@@ -30,7 +30,8 @@ router
                     cmc,
                     imageUrl,
                     power,
-                    toughness
+                    toughness,
+                    text
                 }
             })
 
