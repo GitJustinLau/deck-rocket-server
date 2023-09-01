@@ -10,7 +10,11 @@ router
 router
     .route('/:decklistId')
     .get(decklistsController.activeDecklist)
-    .post(decklistsController.addCard)
     .delete(decklistsController.delDecklist)
+
+router
+    .route('/:decklistId/card')
+    .post(decklistsController.addCard)
+    .patch(decklistsController.removeCard)
     
 module.exports = router;

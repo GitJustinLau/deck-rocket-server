@@ -61,21 +61,25 @@ const activeDecklist = async (req, res) => {
     try {
         let pullCards = await knex('decklist_cards')
             .join('cards', 'decklist_cards.card_id', '=', 'cards.id')
-            .where({ 'decklist_cards.decklist_id': req.params.decklistId })
+            .where({
+                'decklist_cards.decklist_id': req.params.decklistId,
+                'decklist_cards.is_removed': 0
+            })
             .select('cards.*');
 
-        const pullCardIds = await knex('decklist_cards').where({ 'decklist_cards.decklist_id': req.params.decklistId }).select('*');
+        const pullCardIds = await knex('decklist_cards').where({ 'decklist_id': req.params.decklistId, 'is_removed': 0 }).select('*');
+        // console.log("pullCardIds", pullCardIds)
         const pullCardTypesPromises = pullCardIds.map(async (card) => {
             const types = await knex('types')
                 .join('card_types', 'types.id', '=', 'card_types.type_id')
                 .where({ 'card_types.card_id': card.card_id })
                 .select('types.name')
-                // console.log("types", types)
+            // console.log("types", types)
             card.types = types.map((typeObj) => typeObj.name)
             return card
         })
         const pullCardTypes = await Promise.all(pullCardTypesPromises)
-
+        // console.log("pullCardTypes", pullCardTypes)
         const pullCardColorIdPromises = pullCardIds.map(async (card) => {
             const colorId = await knex('colors')
                 .join('card_color_ids', 'colors.id', '=', 'card_color_ids.color_id')
@@ -85,7 +89,7 @@ const activeDecklist = async (req, res) => {
             return card
         })
         const pullCardColorIds = await Promise.all(pullCardColorIdPromises)
-        
+
         pullCards = pullCards.map((card) => {
             const typesIndex = pullCardTypes.findIndex((typeObj) => typeObj.card_id === card.id)
             card.types = pullCardTypes[typesIndex].types
@@ -108,25 +112,41 @@ const activeDecklist = async (req, res) => {
 }
 
 const addCard = async (req, res) => {
-    const cardId = await knex('cards').where({ name: req.body.cardName }).select('id').first()
-    await knex('decklist_cards')
-        .insert({
-            "decklist_id": req.params.decklistId,
-            "card_id": cardId.id
-        })
-        .then(() => {
-            res.status(200).json({ message: 'Card added successfully to the decklist.' });
-        })
-        .catch((error) => {
-            console.error('Error adding card:', error);
-            res.status(500).json({ error: 'An error occurred while adding the card to the decklist.' });
-        });
+    try {
+        const cardId = await knex('cards').where({ name: req.body.cardName }).select('id').first()
+        // console.log("cardId", cardId)
+        const updateDb = await knex('decklist_cards').where({ decklist_id: req.params.decklistId, card_id: cardId.id }).update({ is_removed: false })
+        // console.log("updateDb", updateDb)
+        if (!updateDb) {
+            await knex('decklist_cards')
+                .insert({
+                    "decklist_id": req.params.decklistId,
+                    "card_id": cardId.id
+                })
+        }
+        res.status(200).json({ message: 'Card added successfully to the decklist.' });
+    }
+    catch (error) {
+        console.error('Error adding card:', error);
+        res.status(500).json({ error: 'An error occurred while adding the card to the decklist.' });
+    };
 }
 
+const removeCard = async (req, res) => {
+    try {
+        console.log("req.body.cardId", req.body.cardId)
+        await knex('decklist_cards').where({ decklist_id: req.params.decklistId, card_id: req.body.cardId }).update({ is_removed: true })
+        res.status(200).json({ message: 'Card successfully removed from decklist.' });
+    } catch (error) {
+        console.error('Error deleting card:', error);
+        res.status(500).json({ error: 'An error occurred while deleting the card from the decklist.' });
+    }
+}
 module.exports = {
     getAllDecklists,
     createDecklist,
     delDecklist,
     activeDecklist,
-    addCard
+    addCard,
+    removeCard
 }
