@@ -67,13 +67,12 @@ const activeDecklist = async (req, res) => {
             })
             .select('*');
         pullCards.forEach((card) => {
-            const manaCostArr = card.manaCost.split(/\{(\w+)\}/g)
+            if (card.manaCost) { card.manaCostArr = card.manaCost.split(/\{(\w+)\}/g) }
             // console.log(`manaCostArr - ${card.name}`, manaCostArr)
-            card.manaCostArr = manaCostArr
 
-            const textArr = card.text.split(/\{(\w+)\}/g)
-            console.log(`textArr - ${card.name}`, textArr)
-            card.textArr = textArr
+            if (card.text) {card.textArr = card.text.split(/\{(\w+)\}/g)}
+            // console.log(`textArr - ${card.name}`, textArr)
+
         })
         const pullCardIds = await knex('decklist_cards').where({ 'decklist_id': req.params.decklistId, 'is_removed': 0 }).select('*');
         // console.log("pullCardIds", pullCardIds)
