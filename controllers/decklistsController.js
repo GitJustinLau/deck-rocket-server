@@ -65,8 +65,16 @@ const activeDecklist = async (req, res) => {
                 'decklist_cards.decklist_id': req.params.decklistId,
                 'decklist_cards.is_removed': 0
             })
-            .select('cards.*');
+            .select('*');
+        pullCards.forEach((card) => {
+            const manaCostArr = card.manaCost.split(/\{(\w+)\}/g)
+            // console.log(`manaCostArr - ${card.name}`, manaCostArr)
+            card.manaCostArr = manaCostArr
 
+            const textArr = card.text.split(/\{(\w+)\}/g)
+            console.log(`textArr - ${card.name}`, textArr)
+            card.textArr = textArr
+        })
         const pullCardIds = await knex('decklist_cards').where({ 'decklist_id': req.params.decklistId, 'is_removed': 0 }).select('*');
         // console.log("pullCardIds", pullCardIds)
         const pullCardTypesPromises = pullCardIds.map(async (card) => {
