@@ -1,0 +1,21 @@
+module.exports = [
+    'Basic',
+    'Legendary',
+    'Snow',
+    'World',
+    'Artifact',
+    'Battle',
+    'Conspiracy',
+    'Creature',
+    'Dungeon',
+    'Enchantment',
+    'Instant',
+    'Land',
+    'Phenomenon',
+    'Plane',
+    'Planeswalker',
+    'Scheme',
+    'Sorcery',
+    'Tribal',
+    'Vanguard'
+]
