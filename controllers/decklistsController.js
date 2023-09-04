@@ -70,7 +70,7 @@ const activeDecklist = async (req, res) => {
             if (card.manaCost) { card.manaCostArr = card.manaCost.split(/\{(\w+)\}/g) }
             // console.log(`manaCostArr - ${card.name}`, manaCostArr)
 
-            if (card.text) {card.textArr = card.text.split(/\{(\w+)\}/g)}
+            if (card.text) { card.textArr = card.text.split(/\{(\w+)\}/g) }
             // console.log(`textArr - ${card.name}`, textArr)
 
         })
@@ -139,21 +139,24 @@ const addCard = async (req, res) => {
     };
 }
 
-const removeCard = async (req, res) => {
+const updateCard = async (req, res) => {
     try {
         // console.log("req.body.cardId", req.body.cardId)
-        await knex('decklist_cards').where({ decklist_id: req.params.decklistId, card_id: req.body.cardId }).update({ is_removed: true })
+        const updateObject = {};
+        updateObject[req.body.updateColumn] = req.body.updateValue;
+        await knex('decklist_cards').where({ decklist_id: req.params.decklistId, card_id: req.body.cardId }).update(updateObject)
         res.status(200).json({ message: 'Card successfully removed from decklist.' });
     } catch (error) {
         console.error('Error deleting card:', error);
         res.status(500).json({ error: 'An error occurred while deleting the card from the decklist.' });
     }
 }
+
 module.exports = {
     getAllDecklists,
     createDecklist,
     delDecklist,
     activeDecklist,
     addCard,
-    removeCard
+    updateCard,
 }

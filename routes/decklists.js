@@ -15,6 +15,6 @@ router
 router
     .route('/:decklistId/card')
     .post(decklistsController.addCard)
-    .patch(decklistsController.removeCard)
+    .patch(decklistsController.updateCard)
     
 module.exports = router;
