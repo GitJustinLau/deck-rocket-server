@@ -122,7 +122,7 @@ const addCard = async (req, res) => {
     try {
         const cardId = await knex('cards').where({ name: req.body.cardName }).select('id').first()
         // console.log("cardId", cardId)
-        const updateDb = await knex('decklist_cards').where({ decklist_id: req.params.decklistId, card_id: cardId.id }).update({ is_removed: false })
+        const updateDb = await knex('decklist_cards').where({ decklist_id: req.params.decklistId, card_id: cardId.id }).update({ is_removed: false, quantity: 1 })
         // console.log("updateDb", updateDb)
         if (!updateDb) {
             await knex('decklist_cards')
