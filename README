@@ -1,0 +1,9 @@
+DeckRocket is a deck analyzer site for Magic the Gathering TCG. It allows you to create decklists and populate it with cards. DeckRocket will produce a series of charts and ratios for you to make informed decisions while building or modifying you deck.
+
+Getting started.
+1. Create an account
+2. Make a new decklist
+3. Click the name of the decklist to enter to deckbuilding page
+4. Search for cards to add to your decklist using the search bar in the top right
+5. click on the 2nd icon on the left hand side to view data about your deck
+6. modify your deck by removing cards or adding new cards and watch the data update
