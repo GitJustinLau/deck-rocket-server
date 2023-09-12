@@ -55,6 +55,7 @@ exports.up = function (knex) {
                 .inTable('cards')
                 .onUpdate("CASCADE")
                 .onDelete("CASCADE");
+            table.boolean('is_removed').defaultTo(0);
             table.timestamp("created_at").defaultTo(knex.fn.now());
             table.timestamp("updated_at")
                 .defaultTo(knex.raw("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"));
