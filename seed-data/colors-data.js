@@ -1,11 +1,11 @@
 module.exports = [
-    'White',
-    'Blue',
-    'Black',
-    'Red',
-    'Green',
-    'W',
-    'U',
-    'B',
-    'R',
-    'G']
+    { name: 'White' },
+    { name: 'Blue' },
+    { name: 'Black' },
+    { name: 'Red' },
+    { name: 'Green' },
+    { name: 'W' },
+    { name: 'U' },
+    { name: 'B' },
+    { name: 'R' },
+    { name: 'G' }]

@@ -5,7 +5,10 @@
   "main": "index.js",
   "scripts": {
     "server": "node server",
-    "dev": "nodemon server"
+    "dev": "nodemon server",
+    "rollback": "knex migrate:rollback",
+    "migrate": "knex migrate:latest",
+    "seed": "knex seed:run"
   },
   "keywords": [],
   "author": "",

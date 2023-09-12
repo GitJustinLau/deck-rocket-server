@@ -29,63 +29,80 @@ exports.up = function (knex) {
             table.string('text', 2047).defaultTo(null);
         })
         .createTable('decklists', function (table) {
-            table.integer('id').primary().comment('Primary Key')
+            table.increments('id').primary().comment('Primary Key')
             table.string('name', 255).notNullable();
             table.integer('user_id')
-                .references("user.id")
+                .unsigned()
+                .notNullable()
+                .references('id')
+                .inTable('users')
                 .onUpdate("CASCADE")
                 .onDelete("CASCADE");
             table.boolean('is_deleted').defaultTo(0);
         })
         .createTable('decklist_cards', function (table) {
-            table.integer('id').primary().comment('Primary Key')
-            table.integer('decklist_id').notNullable()
-                .references("decklists.id")
+            table.increments('id').primary().comment('Primary Key')
+            table.integer('decklist_id')
+                .unsigned()
+                .notNullable()
+                .references('id')
+                .inTable('decklists')
                 .onUpdate("CASCADE")
                 .onDelete("CASCADE");
-            table.string('card_id', 255).notNullable()
-                .references("cards.id")
-                .onUpdate("CASCADE")
-                .onDelete("CASCADE");
-        })
-        .createTable('card_color_ids', function (table) {
             table.string('card_id', 255)
                 .notNullable()
-                .references("cards.id")
+                .references('id')
+                .inTable('cards')
+                .onUpdate("CASCADE")
+                .onDelete("CASCADE");
+            table.timestamp("created_at").defaultTo(knex.fn.now());
+            table.timestamp("updated_at")
+                .defaultTo(knex.raw("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"));
+        })
+        .createTable('card_color_ids', function (table) {
+            table.increments('id').primary().comment('Primary Key')
+            table.string('card_id', 255)
+                .notNullable()
+                .references('id')
+                .inTable('cards')
                 .onUpdate("CASCADE")
                 .onDelete("CASCADE");
             table.integer('color_id')
+                .unsigned()
                 .notNullable()
-                .references("colors.id")
+                .references('id')
+                .inTable('colors')
                 .onUpdate("CASCADE")
                 .onDelete("CASCADE");
-            table.primary(['card_id', 'color_id']);
         })
         .createTable('card_types', function (table) {
+            table.increments('id').primary().comment('Primary Key')
             table.string('card_id', 255)
                 .notNullable()
-                .references("cards.id")
+                .references('id')
+                .inTable('cards')
                 .onUpdate("CASCADE")
                 .onDelete("CASCADE");
             table.integer('type_id')
+                .unsigned()
                 .notNullable()
-                .references("types.id")
+                .references('id')
+                .inTable('types')
                 .onUpdate("CASCADE")
                 .onDelete("CASCADE");
-            table.primary(['card_id', 'type_id']);
         })
-    }
+}
 
-    exports.down = function(knex) {
-        return knex.schema
-          .dropTableIfExists('card_types')
-          .dropTableIfExists('card_color_ids')
-          .dropTableIfExists('decklist_cards')
-          .dropTableIfExists('decklists')
-          .dropTableIfExists('cards')
-          .dropTableIfExists('colors')
-          .dropTableIfExists('types')
-          .dropTableIfExists('users');
-      };
-      
+exports.down = function (knex) {
+    return knex.schema
+        .dropTableIfExists('card_types')
+        .dropTableIfExists('card_color_ids')
+        .dropTableIfExists('decklist_cards')
+        .dropTableIfExists('decklists')
+        .dropTableIfExists('cards')
+        .dropTableIfExists('colors')
+        .dropTableIfExists('types')
+        .dropTableIfExists('users');
+};
+
 
