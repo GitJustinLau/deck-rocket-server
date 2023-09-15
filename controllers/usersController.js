@@ -103,7 +103,7 @@ const currentUser = (req, res) => {
                 res.json(user);
             })
             .catch(err => {
-                res.send(500).send('Cant fetch user info');
+                res.status(500).send('Cant fetch user info');
             })
     });
 }
