@@ -8,7 +8,7 @@ const decklistsRouter = require('./routes/decklists');
 const cardSearchRouter = require('./routes/cardSearch');
 const userRoutes = require("./routes/users");
 
-app.use(cors({origin: process.env.CLIENT_URL}));
+app.use(cors());
 app.use(express.json());
 app.use(express.static('./public'));
 
